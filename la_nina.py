@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Fix this mess
 Author: Seth Brown
 Date: 17 Dec 2012
 Description: Weather forecast
@@ -12,12 +13,12 @@ Date: Jan 2014
 import os, sys, urllib, urllib.request, http.client, configparser, textwrap, argparse, json
 
 """ Set config file """
-settings = os.path.expanduser("~/.nino")
+settings = os.path.expanduser("~/.nina")
 config = configparser.ConfigParser()
 
 """ Main """
 def main():
-	parser = argparse.ArgumentParser(description='Niño: Gets Wunderground weather reports. Example: nino 29072', prog='nino')
+	parser = argparse.ArgumentParser(description='Niña: Gets Wunderground weather reports. Example: nina 29072', prog='nina')
 	parser.add_argument('-z','--zip',
 		action='store', dest='ZIP', default=None,
 		help='Zip code for weather. If nothing is provided, use favourite zip from config file.')
@@ -33,9 +34,9 @@ def read_config(APIKEY, ZIP):
 		if os.path.exists(settings):
 			config.read(settings)
 			if APIKEY is None:
-				APIKEY = config['NINO']['APIKEY']
+				APIKEY = config['NINA']['APIKEY']
 			if ZIP is None:
-				ZIP = config['NINO']['ZIP']
+				ZIP = config['NINA']['ZIP']
 			get_weather(APIKEY, ZIP)
 		if not os.path.exists(settings):
 			set_config()
@@ -68,7 +69,7 @@ def set_config():
 		http://www.wunderground.com/weather/api
 		"""))
 		quit()
-	config ['NINO'] = {'APIKEY': APIKEY,
+	config ['NINA'] = {'APIKEY': APIKEY,
 		'ZIP': ZIP}
 	with open(settings, 'w') as configfile:
 		config.write(configfile)
