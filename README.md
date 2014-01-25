@@ -1,17 +1,17 @@
 La Niña: Command Line Weather
-==========================
+=============================
 
-La Niña is a simple command line interface for the Wunderground API written in Python. 
+La Niña is a simple command line interface for the Wunderground API written in Python.  
 Originally a fork of [Niño][1]
 
-Dependencies:
---------------------------
+You Will Need:
+--------------
 
-* Python 3+
+* Python 3.3+ (Tested with 3.3.3)  
 * [Wunderground API key][2]
 
 Usage:
---------------------------
+------
 
 La Niña can be used with either command line arguments or with a config file.
 
