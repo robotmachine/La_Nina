@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Fix this mess
-Author: Seth Brown
-Date: 17 Dec 2012
-Description: Weather forecast
-
-Updated: Brian Carter
-Ported to Python3 and added functionality to use a dotfile to store favourite zip code and API key.
-Date: Jan 2014
+Author: Brian Carter
+http://github.com/robotmachine/La_Nina
+""" """
+Originally forked from niño || https://github.com/drbunsen/nino
 """
 import os, sys, urllib, urllib.request, http.client, configparser, textwrap, argparse, json
 
@@ -26,22 +22,19 @@ def main():
 		action='store', dest='APIKEY', default=None,
 		help='API key from http://www.wunderground.com/weather/api')
 	args = parser.parse_args()
-	read_config(APIKEY=args.APIKEY, ZIP=args.ZIP)
-
-""" Read config file """
-def read_config(APIKEY, ZIP):
-	if APIKEY is None or ZIP is None:
-		if os.path.exists(settings):
-			config.read(settings)
-			if APIKEY is None:
-				APIKEY = config['NINA']['APIKEY']
-			if ZIP is None:
-				ZIP = config['NINA']['ZIP']
-			get_weather(APIKEY, ZIP)
-		if not os.path.exists(settings):
-			set_config()
-	elif APIKEY is not None and ZIP is not None:
+	APIKEY = args.APIKEY
+	ZIP = args.ZIP
+	if os.path.exists(settings):
+		config.read(settings)
+		if APIKEY is None:
+			APIKEY = config['NINA']['APIKEY']
+		if ZIP is None:
+			ZIP = config['NINA']['ZIP']
 		get_weather(APIKEY, ZIP)
+	if ZIP is not None and APIKEY is not None:
+		get_weather(APIKEY, ZIP)
+	elif ZIP is None and APIKEY is None:
+		set_config()
 
 """ Create config file """
 def set_config():
