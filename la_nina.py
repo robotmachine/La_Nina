@@ -8,8 +8,11 @@ Originally forked from niño || https://github.com/drbunsen/nino
 """
 import os, sys, urllib, urllib.request, http.client, configparser, textwrap, argparse, json
 
-""" Set config file """
 settings = os.path.expanduser("~/.nina")
+if os.path.exists(settings):
+	dotfile = True
+elif not os.path.exists(settings):
+	dotfile = False
 config = configparser.ConfigParser()
 
 """ Main """
@@ -21,52 +24,77 @@ def main():
 	parser.add_argument('-k','--key',
 		action='store', dest='APIKEY', default=None,
 		help='API key from http://www.wunderground.com/weather/api')
+	parser.add_argument('--edit-config', dest="EDIT",
+		action='store_true', default=False,
+		help='Create or edit config file.')
 	args = parser.parse_args()
+	EDIT = args.EDIT
 	APIKEY = args.APIKEY
 	ZIP = args.ZIP
-	if os.path.exists(settings):
+	if EDIT is True:
+		set_config()
+	if dotfile is True and APIKEY is None:
 		config.read(settings)
-		if APIKEY is None:
-			APIKEY = config['NINA']['APIKEY']
-		if ZIP is None:
-			ZIP = config['NINA']['ZIP']
+		APIKEY = config['NINA']['APIKEY']
+	if dotfile is True and ZIP is None:
+		config.read(settings)
+		ZIP = config['NINA']['ZIP']
 	if ZIP is not None and APIKEY is not None:
+		"""print("Would have called a simple forecast with API key {} and ZIP {}".format(APIKEY, ZIP))"""
 		simple_forecast(APIKEY, ZIP)
 	if ZIP is None and APIKEY is None:
 		set_config()
 
 """ Create config file """
 def set_config():
-	print(textwrap.dedent("""
-	A Wunderground API Key is required.
-	Create one for free here:
-	http://www.wunderground.com/weather/api
-	"""))
-	APIKEY = input("Wunderground API Key: ")
-	if (APIKEY == ""):
+	if dotfile is False:
 		print(textwrap.dedent("""
-		API Key is not optional!
-		Create one for free and return!
+		A Wunderground API Key is required.
+		Create one for free here:
 		http://www.wunderground.com/weather/api
 		"""))
-		quit()
-	print(textwrap.dedent("""
-	Set your local ZIP code to use as the default
-	"""))
-	ZIP = input("ZIP: ")
-	if (APIKEY == ""):
+		APIKEY = input("Wunderground API Key: ")
 		print(textwrap.dedent("""
-		API Key is not optional!
-		Create one for free and return!
-		http://www.wunderground.com/weather/api
+		Set your local ZIP code to use as the default
 		"""))
+		ZIP = input("ZIP: ")
+		if (ZIP == ""):
+			ZIP = False
+		config ['NINA'] = {'APIKEY': APIKEY,
+			'ZIP': ZIP}
+		with open(settings, 'w') as configfile:
+			config.write(configfile)
+		print("Settings saved!")
 		quit()
-	config ['NINA'] = {'APIKEY': APIKEY,
-		'ZIP': ZIP}
-	with open(settings, 'w') as configfile:
-		config.write(configfile)
-	print("Settings saved!")
-	quit()
+	elif dotfile is True:
+		config.read(settings)
+		APIKEY = config['NINA']['APIKEY']
+		ZIP = config['NINA']['ZIP']
+		print(textwrap.dedent("""
+		Current stored API key is {}
+		Would you like to change it?
+		""".format(APIKEY)))
+		BOOL1 = input("Y/N: ")
+		if BOOL1 in ['Y', 'y', 'Yes', 'YES', 'yes']:
+			APIKEY = input("New API key: ")
+			config ['NINA'] = {'APIKEY': APIKEY}
+			with open(settings, 'w') as configfile:
+				config.write(configfile)
+		else:
+			print(textwrap.dedent("Keeping {} in config file.".format(APIKEY)))
+		print(textwrap.dedent("""
+		Current stored ZIP is {}
+		Would you like to change it?
+		""".format(ZIP)))
+		BOOL2 = input("Y/N: ")
+		if BOOL2 in ['Y', 'y', 'Yes', 'YES', 'yes']:
+			ZIP = input("New ZIP: ")
+			config ['NINA'] = {'ZIP': ZIP}
+			with open(settings, 'w') as configfile:
+				config.write(configfile)
+		else:
+			print(textwrap.dedent("Keeping {} in config file.".format(ZIP)))
+		quit()
 
 """ Assemble weather data. """
 def weather(data, day_idx):
