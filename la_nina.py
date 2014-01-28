@@ -30,10 +30,9 @@ def main():
 			APIKEY = config['NINA']['APIKEY']
 		if ZIP is None:
 			ZIP = config['NINA']['ZIP']
-		get_weather(APIKEY, ZIP)
 	if ZIP is not None and APIKEY is not None:
-		get_weather(APIKEY, ZIP)
-	elif ZIP is None and APIKEY is None:
+		simple_forecast(APIKEY, ZIP)
+	if ZIP is None and APIKEY is None:
 		set_config()
 
 """ Create config file """
@@ -70,11 +69,11 @@ def set_config():
 	quit()
 
 """ Assemble weather data. """
-def weather(dat, day_idx):
-    data = dat['forecast']['txt_forecast']['forecastday'][day_idx]
-    day = data['title']
-    forecast = data['fcttext']
-    temps = dat['forecast']['simpleforecast']['forecastday'][day_idx]
+def weather(data, day_idx):
+    dat = data['forecast']['txt_forecast']['forecastday'][day_idx]
+    day = dat['title']
+    forecast = dat['fcttext']
+    temps = data['forecast']['simpleforecast']['forecastday'][day_idx]
     high = temps['high']['fahrenheit']
     low = temps['low']['fahrenheit']
     return day, forecast, high, low
@@ -92,8 +91,8 @@ def cli_format(d):
     return out
 
 
-""" Get the damn weather already! """
-def get_weather(APIKEY, ZIP):
+""" Simple forecast (today, tonight, and tomorrow)  """
+def simple_forecast(APIKEY, ZIP):
 	wunder_data = {'api_url': 'http://api.wunderground.com/api/',
 			'api_key': APIKEY,
 			'query': '/conditions/forecast/q/',
