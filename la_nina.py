@@ -129,8 +129,24 @@ def simple_forecast(APIKEY, ZIP):
 	response = urllib.request.urlopen(url)
 	content = response.read()
 	data = json.loads(content.decode("utf8"))
-	location = data['current_observation']['display_location']['full']
-	print('\n{0}\n'.format(location))
+	""" Test if the provided ZIP code is valid. """	
+	try:
+		location = data['current_observation']['display_location']['full']
+	except:
+		location = False
+	try:
+		error = data['response']['error']['description']
+	except:
+		error = False
+	if location is False and error is not False:
+		print(error)
+		quit()
+	elif location is not False and error is False:
+		print('\n{0}\n'.format(location))
+	else:
+		print("Location returned: {}".format(location))
+		print("Error returned: {}".format(error))
+		quit()
 	times = (0, 1, 2)
 	for time in times:
 		weather_data = weather(data, time)
