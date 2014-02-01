@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+La Niña
+Command Line Weather using the http://wunderground.com API
 Author: Brian Carter
 http://github.com/robotmachine/La_Nina
-""" """
+
 Originally forked from niño || https://github.com/drbunsen/nino
 """
 import os, sys, urllib, urllib.request, http.client, configparser, textwrap, argparse, json
