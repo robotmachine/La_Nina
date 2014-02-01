@@ -65,7 +65,8 @@ def set_config():
 		with open(settings, 'w') as configfile:
 			config.write(configfile)
 		print("Settings saved!")
-		quit()
+		dotfile = True
+		main()
 	elif dotfile is True:
 		config.read(settings)
 		APIKEY = config['NINA']['APIKEY']
