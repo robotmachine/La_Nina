@@ -45,30 +45,38 @@ def main():
 		"""print("Would have called a simple forecast with API key {} and ZIP {}".format(APIKEY, ZIP))"""
 		simple_forecast(APIKEY, ZIP)
 	if ZIP is None and APIKEY is None:
-		set_config()
+		set_config(dotfile)
 
 """ Create config file """
-def set_config():
+def set_config(dotfile):
 	if dotfile is False:
-		print(textwrap.dedent("""
-		A Wunderground API Key is required.
-		Create one for free here:
-		http://www.wunderground.com/weather/api
-		"""))
-		APIKEY = input("Wunderground API Key: ")
-		print(textwrap.dedent("""
-		Set your local ZIP code to use as the default
-		"""))
-		ZIP = input("ZIP: ")
-		if (ZIP == ""):
-			ZIP = False
-		config ['NINA'] = {'APIKEY': APIKEY,
-			'ZIP': ZIP}
-		with open(settings, 'w') as configfile:
-			config.write(configfile)
-		print("Settings saved!")
-		dotfile = True
-		main()
+		try:
+			print(textwrap.dedent("""
+			A Wunderground API Key is required.
+			Create one for free here:
+			http://www.wunderground.com/weather/api
+			"""))
+			APIKEY = input("Wunderground API Key: ")
+			print(textwrap.dedent("""
+			Set your local ZIP code to use as the default
+			"""))
+			ZIP = input("ZIP: ")
+			if (ZIP == ""):
+				ZIP = False
+			config ['NINA'] = {'APIKEY': APIKEY,
+				'ZIP': ZIP}
+			with open(settings, 'w') as configfile:
+				config.write(configfile)
+			print("Settings saved!")
+			dotfile = True
+			main()
+		except KeyboardInterrupt:
+			print("\nUser exit.")
+			quit()
+		except SyntaxError:
+			print("\nSyntax Error.")
+			set_config(dotfile)
+			
 	elif dotfile is True:
 		config.read(settings)
 		APIKEY = config['NINA']['APIKEY']
